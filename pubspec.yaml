@@ -1,0 +1,99 @@
+name: vira
+description: "VIRA — The Frontline of Hope. Emergency medical logistics platform for Kenya."
+publisher: Fyna
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # ── State management ──
+  # Riverpod chosen over Provider/Bloc because trip state, courier location,
+  # and dispatch queues are all server-pushed streams (WebSocket/Kafka-bridged),
+  # not just local app state. StreamProvider is the natural fit.
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+
+  # ── Networking ──
+  dio: ^5.4.3+1                  # REST client (API Gateway calls)
+  web_socket_channel: ^2.4.5     # WebSocket Gateway connection (live location, trip events)
+  connectivity_plus: ^6.0.3      # detect dead-zone / offline state on courier routes
+
+  # ── Routing ──
+  go_router: ^14.2.0             # role-based routing guard (Rider / Courier / Dispatch)
+
+  # ── Location & Maps ──
+  geolocator: ^12.0.0            # GPS stream, 5s tick per spec
+  google_maps_flutter: ^2.7.0    # live map (rider/courier/dispatch views)
+  flutter_background_geolocation: ^4.16.2   # survives app-kill / screen-lock on courier rides
+
+  # ── Local persistence / offline queue ──
+  hive: ^2.2.3                   # local cache: pending location pings, queued custody events
+  hive_flutter: ^1.1.0
+  shared_preferences: ^2.2.3     # session/role/token persistence
+
+  # ── Auth / OTP ──
+  pinput: ^5.0.0                 # OTP input widget
+
+  # ── Payments ──
+  # M-Pesa STK push + B2C disbursement are server-initiated (Daraja API lives on the
+  # backend, never in-app) — this client just renders status returned via webhook/socket.
+
+  # ── Media capture (chain of custody) ──
+  image_picker: ^1.1.2           # delivery confirmation photo
+  signature: ^5.5.0               # recipient signature capture
+
+  # ── UI utilities ──
+  google_fonts: ^6.2.1
+  flutter_svg: ^2.0.10+1          # VIRA "V" mark, vector icons
+  intl: ^0.19.0
+  equatable: ^2.0.5
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  riverpod_generator: ^2.4.0
+  build_runner: ^2.4.11
+  custom_lint: ^0.6.4
+  riverpod_lint: ^2.3.10
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/icons/
+    - assets/images/
+    # assets/images/vira_logo.png — full lockup (logo.png provided by brand).
+    # assets/images/vira_favicons_reference.png — favicon/app-icon reference.
+    # The in-app ViraMark widget (lib/shared/widgets/vira_mark.dart) reproduces
+    # this mark as vector paths rather than referencing these PNGs directly,
+    # so it can recolor and scale cleanly across themes and densities. The
+    # PNGs are kept as the source-of-truth reference and for app icon export.
+
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Inter-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/Inter-Black.ttf
+          weight: 900
+    - family: JetBrainsMono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-Regular.ttf
+        - asset: assets/fonts/JetBrainsMono-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/JetBrainsMono-Bold.ttf
+          weight: 700
